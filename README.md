@@ -1,7 +1,7 @@
 # Signal Quest
 
 <div style="float: right; margin-left: 1em;">
-<video src="https://github.com/specht/signal-quest/raw/refs/heads/master/assets/random-walker.mp4" style="width: 300px;"></video>
+<img src="assets/random-walker.gif" style="width: 300px;">
 </div>
 
 Signal Quest ist ein Programmierwettbewerb, der sich an Schülerinnen und Schüler richtet, die ihre Fähigkeiten im Bereich der algorithmischen Problemlösung und Programmierung verbessern möchten. In diesem Wettbewerb programmierst du einen Bot, der sich durch ein Labyrinth bewegt, um möglichst schnell und effizient Beacons zu finden und einzusammeln.
