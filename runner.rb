@@ -221,9 +221,9 @@ class Runner
 
     PORTAL_EMOJIS = ['🔴', '🔵', '🟢', '🟡']
     ANTENNA_EMOJI = '📡'
-    BEACON_COLOR = '#d5291a'
+    BEACON_COLOR = '#238acc'
     FLOOR_COLOR = '#222728'
-    WALL_COLOR = '#7dcdc2'
+    WALL_COLOR = '#555753'
 
     Bot = Struct.new(:stdin, :stdout, :stderr, :wait_thr)
 
@@ -330,7 +330,7 @@ class Runner
                 @bots.each.with_index do |bot, i|
                     p = bot[:position]
                     if p[0] == x && p[1] == y
-                        c = '🥴 '
+                        c = '🤔 '
                     end
                 end
                 @beacons.each.with_index do |p, i|
@@ -565,7 +565,7 @@ class Runner
                     end
                     level_sum = 0.0
                     @beacons.each.with_index do |beacon, i|
-                        level_sum += beacon_level[i]["#{bot_position[0]}/#{bot_position[1]}"]
+                        level_sum += beacon_level[i]["#{bot_position[0]}/#{bot_position[1]}"] || 0.0
                     end
                     # level_sum = 1.0 if level_sum > 1.0
                     data[:beacon_level] = format("%.6f", level_sum).to_f
@@ -686,7 +686,7 @@ options = {
     cache: false,
     rounds: 1,
     emit_signals: true,
-    beacon_icon: "✨",
+    beacon_icon: "💎",
     profile: false,
 }
 GENERATORS = %w(arena divided eller icey cellular uniform digger rogue)

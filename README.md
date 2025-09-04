@@ -2,7 +2,7 @@
 
 Signal Quest ist ein Programmierwettbewerb, der sich an Schülerinnen und Schüler richtet, die ihre Fähigkeiten im Bereich der algorithmischen Problemlösung und Programmierung verbessern möchten. In diesem Wettbewerb programmierst du einen Bot, der sich durch ein Labyrinth bewegt, um möglichst schnell und effizient Beacons zu finden und einzusammeln.
 
-<img src="assets/random-walker-bot.gif">
+<img src="assets/bot-v3.gif">
 
 Oben siehst du einen Bot, der zufällig durch das Labyrinth läuft und dabei Beacons einsammelt (leider ist er nicht besonders gut darin). Deine Aufgabe ist es, einen Bot zu programmieren, der intelligenter vorgeht und die Beacons schneller findet.
 
