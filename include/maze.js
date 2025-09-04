@@ -16,6 +16,147 @@
 let ROT;
 try { ROT = require("rot-js"); } catch { ROT = require("./rot.min.js"); }
 
+/* ==== BEGIN: contest PRNG adapter for rot.js (PCG32 XSH RR) ==== */
+class PCG32 {
+  constructor(seed = null, streamInitSeq = 54n) {
+    this.MASK64 = (1n << 64n) - 1n;
+    this.MASK32 = (1n << 32n) - 1n;
+    this.MULT   = 6364136223846793005n;
+    this.seed(seed, streamInitSeq);
+  }
+  seed(seed, streamInitSeq = 54n) {
+    if (seed == null) seed = this._defaultTimeSeed();
+    let initstate = BigInt.asUintN(64, BigInt(seed));
+    let initseq   = BigInt.asUintN(64, BigInt(streamInitSeq));
+    this.state = 0n;
+    this.inc   = BigInt.asUintN(64, (initseq << 1n) | 1n); // ensure odd
+    this._nextUint32();
+    this.state = BigInt.asUintN(64, this.state + initstate);
+    this._nextUint32();
+  }
+  _rotr32(x, r) {
+    r &= 31n;
+    return Number(((x >> r) | ((x << ((-r) & 31n)) & this.MASK32)) & this.MASK32) >>> 0;
+  }
+  _nextUint32() {
+    const old = this.state;
+    this.state = BigInt.asUintN(64, old * this.MULT + this.inc);
+    const xorshifted = ((old >> 18n) ^ old) >> 27n;
+    const rot = old >> 59n;
+    return this._rotr32(xorshifted & this.MASK32, rot);
+  }
+  nextUint32() { return this._nextUint32(); }
+  nextFloat() { return this._nextUint32() / 2**32; } // [0,1)
+  int(n) { // unbiased int in [0,n)
+    if (!(Number.isInteger(n) && n > 0)) throw new Error("n must be positive int");
+    const t = (2**32) % n;
+    for (;;) {
+      const r = this._nextUint32() >>> 0;
+      if (r >= t) return r % n;
+    }
+  }
+  getState() { return { state: this.state.toString(), inc: this.inc.toString() }; }
+  setState(s) {
+    this.state = BigInt.asUintN(64, BigInt(s.state));
+    this.inc   = BigInt.asUintN(64, BigInt(s.inc));
+  }
+  clone() { const c = new PCG32(0); c.setState(this.getState()); return c; }
+  _defaultTimeSeed() {
+    const nowMs = BigInt(Date.now() >>> 0);
+    let hi = 0n;
+    if (typeof process !== "undefined" && process.hrtime) {
+      const [sec, ns] = process.hrtime();
+      hi = (BigInt(sec) << 32n) ^ BigInt(ns >>> 0);
+    } else if (typeof performance !== "undefined" && performance.now) {
+      hi = BigInt(Math.floor(performance.now() * 1e6) >>> 0);
+    }
+    return BigInt.asUintN(64, (hi << 32n) ^ nowMs);
+  }
+}
+
+/** Adapter that mimics ROT.RNG’s public API */
+// --- Install adapter BEFORE any ROT usage (patch methods, don't replace object) ---
+function _tryParseNumericSeed(x) {
+  if (typeof x === "number" && Number.isFinite(x)) return x;
+  if (typeof x !== "string") return null;
+  const s = x.trim().toLowerCase().replace(/n$/, "");
+  if (/^0x[0-9a-f]+$/.test(s))  return Number.parseInt(s, 16);
+  if (/^[+-]?\d+$/.test(s))     return Number.parseInt(s, 10);
+  return null;
+}
+function _hash64(str) { // FNV-1a 64-bit
+  let h = 0xcbf29ce484222325n, p = 0x100000001b3n;
+  for (let i = 0; i < str.length; i++) {
+    h ^= BigInt(str.charCodeAt(i) & 0xff);
+    h = (h * p) & ((1n << 64n) - 1n);
+  }
+  return h;
+}
+class RotPcgAdapter {
+  constructor(seed = null) { this._pcg = new PCG32(null); this.setSeed(seed); }
+  setSeed(seed) {
+    if (seed == null) { this._pcg.seed(null); return this; }
+    const n = _tryParseNumericSeed(seed);
+    this._pcg.seed(n !== null ? n : _hash64(String(seed)));
+    return this;
+  }
+  getUniform() { return this._pcg.nextFloat(); }
+  getUniformInt(a, b) { return a + this._pcg.int(b - a + 1); }
+  getNormal(mean = 0, stddev = 1) {
+    let u = 0, v = 0;
+    while (u === 0) u = this.getUniform();
+    while (v === 0) v = this.getUniform();
+    const z = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    return mean + stddev * z;
+  }
+  getWeightedValue(data) {
+    let total = 0, entries = [];
+    for (const k in data) { const w = data[k]; if (w > 0) { total += w; entries.push([k, w]); } }
+    if (total <= 0) return null;
+    let r = this.getUniform() * total;
+    for (const [k, w] of entries) { if ((r -= w) < 0) return k; }
+    return entries[entries.length - 1][0];
+  }
+  getState() { return this._pcg.getState(); }
+  setState(s) { this._pcg.setState(s); return this; }
+  clone()     { const c = new RotPcgAdapter(0); c.setState(this.getState()); return c; }
+}
+
+(function installContestRng() {
+  // detect --seed 123 | -s 123 | --seed=123 | -s=123
+  const argv = process.argv.slice(2);
+  let cliSeed;
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === "--seed" || a === "-s") { cliSeed = argv[i + 1] && !argv[i + 1].startsWith("-") ? argv[i + 1] : ""; break; }
+    if (a.startsWith("--seed=")) { cliSeed = a.split("=",2)[1]; break; }
+    if (a.startsWith("-s="))     { cliSeed = a.split("=",2)[1]; break; }
+  }
+  const seed = (cliSeed !== undefined) ? cliSeed
+             : (process?.env?.CONTEST_SEED ?? null);
+
+  // IMPORTANT: grab whatever ROT.RNG object rot.js exported and PATCH ITS METHODS
+  const target = (typeof ROT !== "undefined" && ROT.RNG) ? ROT.RNG : (globalThis.ROT ??= {}, globalThis.ROT.RNG ??= {});
+  const adapter = new RotPcgAdapter(seed);
+
+  // Patch methods to delegate to our adapter (do not replace 'target' itself)
+  target.setSeed          = s => { adapter.setSeed(s); return target; };
+  target.getUniform       = () => adapter.getUniform();
+  target.getUniformInt    = (a,b) => adapter.getUniformInt(a,b);
+  target.getNormal        = (m,s) => adapter.getNormal(m,s);
+  target.getWeightedValue = d => adapter.getWeightedValue(d);
+  target.getState         = () => adapter.getState();
+  target.setState         = s => { adapter.setState(s); return target; };
+  target.clone            = () => adapter.clone();
+
+  // Optional: debug
+  const oldNext = adapter._pcg._nextUint32.bind(adapter._pcg);
+  adapter._pcg._nextUint32 = () => { return oldNext(); };
+
+  globalThis.__CONTEST_RNG__ = adapter;
+})();
+/* ==== END: contest PRNG adapter ==== */
+
 /* ---------------- CLI ---------------- */
 const args = process.argv.slice(2);
 const getFlag = (name, short) => {
@@ -80,6 +221,7 @@ const steps   = Math.max(0, parseInt(getFlag("steps"), 10) || 4);
 const addBorder   = !hasFlag("no-border");   // default true
 const doConnect   = !hasFlag("no-connect");  // default true
 
+// (Kept for compatibility; adapter already installed above. This will just reseed it.)
 if (seed !== undefined) {
   const n = Number(seed);
   ROT.RNG.setSeed(Number.isNaN(n) ? seed : n);

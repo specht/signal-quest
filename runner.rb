@@ -4,8 +4,11 @@ $LOAD_PATH.unshift File.expand_path("include/unicode-emoji-4.0.4/lib", __dir__)
 $LOAD_PATH.unshift File.expand_path("include/unicode-display_width-3.1.5/lib", __dir__)
 $LOAD_PATH.unshift File.expand_path("include/paint-2.3.0/lib", __dir__)
 
+require './include/pcg32.rb'
+
 require 'digest'
 require 'fileutils'
+require "io/console"
 require 'json'
 require 'open3'
 require 'optparse'
@@ -14,7 +17,6 @@ require 'set'
 require 'unicode/display_width'
 require 'yaml'
 require 'zlib'
-require "io/console"
 
 TERMINAL_HEIGHT, TERMINAL_WIDTH = $stdout.winsize
 
@@ -307,7 +309,7 @@ class Runner
 
         puts Paint[status_line, UI_FOREGROUND, UI_BACKGROUND]
 
-        paint_rng = Random.new(1234)
+        paint_rng = PCG32.new(1234)
 
         bots_visible = @bots.map do |bot|
             pos = bot[:position]
@@ -323,7 +325,7 @@ class Runner
                 if cell
                     c = '███'
                     # c = '##'
-                    fg = mix_rgb_hex(WALL_COLOR, '#000000', paint_rng.rand() * 0.25)
+                    fg = mix_rgb_hex(WALL_COLOR, '#000000', paint_rng.next_float() * 0.25)
                 end
                 @bots.each.with_index do |bot, i|
                     p = bot[:position]
@@ -354,7 +356,7 @@ class Runner
     end
 
     def setup
-        srand(@seed)
+        @rng = PCG32.new(@seed)
         @maze = gen_maze
         @floor_tiles = []
         @checksum = Digest::SHA256.hexdigest(@maze.to_json)
@@ -365,7 +367,7 @@ class Runner
                 end
             end
         end
-        @floor_tiles.shuffle!
+        @rng.shuffle!(@floor_tiles)
         @floor_tiles_set = Set.new(@floor_tiles)
         @spawn_points = []
         @spawn_points << @floor_tiles.shift
@@ -428,7 +430,7 @@ class Runner
             floor_tiles.delete([beacon[:position][0], beacon[:position][1]])
         end
         return 0 if floor_tiles.empty?
-        beacon = {:position => floor_tiles.to_a.sample, :ttl => @beacon_ttl}
+        beacon = {:position => @rng.sample(floor_tiles.to_a), :ttl => @beacon_ttl}
 
         # pre-calculate beacon level
         level = {}
@@ -489,7 +491,7 @@ class Runner
                 beacon_level = @beacons.map do |beacon|
                     temp = if @beacon_noise > 0.0
                         beacon[:level].transform_values do |l|
-                            l += (rand() - 0.5) * 2.0 * @beacon_noise
+                            l += (@rng.next_float() - 0.5) * 2.0 * @beacon_noise
                             l = 0.0 if l < 0.0
                             l = 1.0 if l > 1.0
                             l
@@ -619,7 +621,7 @@ class Runner
                 @beacons.reject! do |beacon|
                     beacon[:ttl] <= 0
                 end
-                if rand() < @beacon_spawn && @beacons.size < @max_beacons
+                if @rng.next_float() < @beacon_spawn && @beacons.size < @max_beacons
                     spawned_ttl += add_beacon()
                 end
                 STDIN.raw do |stdin|
@@ -794,12 +796,12 @@ if options[:rounds] == 1
     runner.run
 else
     round_seed = Digest::SHA256.digest("#{options[:seed]}/rounds").unpack1('L<')
-    seed_rng = Random.new(round_seed)
+    seed_rng = PCG32.new(round_seed)
     all_bu = []
     all_ttfc = []
     all_tc = []
     options[:rounds].times do |i|
-        options[:seed] = seed_rng.rand(2 ** 32)
+        options[:seed] = seed_rng.randrange(2 ** 32)
         runner = Runner.new(**options)
         runner.round = i
         runner.setup
