@@ -282,7 +282,7 @@ class Runner
     end
 
     def gen_maze
-        command = "node include/maze.js --width #{@width} --height #{@height} --generator #{@generator} --seed #{@seed} --wall '#' --floor '.'"
+        command = "node include/maze.js --width #{@width} --height #{@height} --generator #{@generator} --seed #{@seed} --wall \"#\" --floor \".\""
         maze = `#{command}`.strip.split("\n").map { |x| x.strip }.select do |line|
             line =~ /^[\.#]+$/
         end.map do |line|
