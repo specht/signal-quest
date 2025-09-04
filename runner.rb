@@ -20,12 +20,12 @@ require 'zlib'
 
 TERMINAL_HEIGHT, TERMINAL_WIDTH = $stdout.winsize
 
-Signal.trap("WINCH") do
-    Object.send(:remove_const, :TERMINAL_WIDTH)
-    Object.send(:remove_const, :TERMINAL_HEIGHT)
-    TERMINAL_HEIGHT, TERMINAL_WIDTH = $stdout.winsize
-    print "\033[2J\033[H"
-end
+# Signal.trap("WINCH") do
+#     Object.send(:remove_const, :TERMINAL_WIDTH)
+#     Object.send(:remove_const, :TERMINAL_HEIGHT)
+#     TERMINAL_HEIGHT, TERMINAL_WIDTH = $stdout.winsize
+#     print "\033[2J\033[H"
+# end
 
 def median(array)
     return nil if array.empty?
