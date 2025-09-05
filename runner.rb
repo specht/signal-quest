@@ -264,6 +264,7 @@ class Runner
 
     def start_bot(_path, &block)
         path = File.join(File.expand_path(_path), 'start.sh')
+        STDERR.puts path
         stdin, stdout, stderr, wait_thr = Open3.popen3(path, chdir: File.dirname(path))
         stdin.sync = true
         stdout.sync = true
@@ -766,11 +767,11 @@ OptionParser.new do |opts|
 end.parse!
 
 bot_paths = ARGV.map do |x|
-    File.join(File.expand_path(x), 'start.sh')
+    File.expand_path(x)
 end
 
 if bot_paths.empty?
-    bot_paths << "random-walker"
+    bot_paths << "random-walker/ruby"
 end
 
 # Apply stage if given
