@@ -36,7 +36,7 @@ Der Wettbewerb läuft über mehrere Monate. In jeder Stufe hast du Zeit, deinen 
 
 Du kannst deinen Bot in einer  Programmiersprache deiner Wahl programmieren. Dein Bot bekommt in jeder Runde Informationen über seine Umgebung und muss darauf basierend eine Aktion auswählen. Die Informationen, die dein Bot erhält, werden im JSON-Format bereitgestellt. Dein Bot muss diese Informationen verarbeiten und anschließend eine Aktion zurückgeben, z. B. »gehe nach Norden«.
 
-Damit du gleich loslegen kannst, haben wir ein paar Beispiel-Bots in verschiedenen Programmiersprachen (C++, C#, Dart, Go, Java, Lua, Node.js, PHP, PowerShell, Python und Ruby) vorbereitet, die du als Vorlage verwenden kannst.
+Damit du gleich loslegen kannst, haben wir ein paar Beispiel-Bots in verschiedenen Programmiersprachen (Python, Java, C#, C++, JavaScript, Ruby, PHP, Go, Dart, Lua, PowerShell) vorbereitet, die du als Vorlage verwenden kannst.
 
 ## Wie teste ich meinen Bot?
 
