@@ -12,14 +12,17 @@ Oben siehst du einen Bot, der zufällig durch das Labyrinth läuft und dabei Bea
 
 Der Wettbewerb besteht aus mehreren Stufen. Da der Wettbewerb nebenbei zur Schule läuft, sind die Stufen so großzügig bemessen, dass du nebenbei auch noch Zeit für deine schulischen Verpflichtungen hast.
 
-| Beginn | Finale | Dauer | Stage |
+| Beginn | Dauer | Stage | Titel |
 |--------|--------|-------|-------|
-| 03.11.2025 | 23.11.2025 | 3 Wochen | **Training Grounds** (Stage 1) |
-| 24.11.2025 | 14.12.2025 | 3 Wochen | **Dark Signal** (Stage 2) |
-| 15.12.2025 | 25.01.2026 | 6 Wochen | **Resonance** (Stage 3) |
-| 26.01.2026 | 01.03.2026 | 5 Wochen | **Signal Array** (Stage 4) |
-| 02.03.2026 | 29.03.2026 | 4 Wochen | **Portal Nexus** (Stage 5) |
-| 30.03.2026 | 26.04.2026 | 4 Wochen | **The Swarm** (Bonus Stage) |
+| 06.10.2025 | 4 Wochen | Stage 0 | System Check (optional) |
+| 03.11.2025 | 3 Wochen | Stage 1 | **Training Grounds** |
+| 24.11.2025 | 3 Wochen | Stage 2 | **Dark Signal** |
+| 15.12.2025 | 6 Wochen | Stage 3 | **Resonance** |
+| 26.01.2026 | 5 Wochen | Stage 4 | **Signal Array** |
+| 02.03.2026 | 4 Wochen | Stage 5 | **Portal Nexus** |
+| 30.03.2026 | 4 Wochen | Bonus Stage | **The Swarm** |
+
+In Stage 0 kannst du testen, ob dein Bot korrekt funktioniert und ob du ihn erfolgreich einreichen kannst. Diese Stufe fließt nicht in die Wertung ein, es handelt sich nur um eine optionale Vorbereitungsphase.
 
 ## Teilnahme
 
