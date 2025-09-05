@@ -2,3 +2,6 @@ cache
 random-walker/java/RandomWalker.class
 random-walker/cpp/bot
 random-walker/go/bot
+random-walker/cs/RandomWalker.csproj
+random-walker/cs/bin/
+random-walker/cs/obj/
