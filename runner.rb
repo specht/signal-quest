@@ -262,8 +262,10 @@ class Runner
         @beacons = []
     end
 
-    def start_bot(argv, &block)
-        stdin, stdout, stderr, wait_thr = Open3.popen3(*argv, chdir: File.dirname(argv))
+    def start_bot(_path, &block)
+        path = File.join(File.expand_path(_path), 'start.sh')
+        STDERR.puts path
+        stdin, stdout, stderr, wait_thr = Open3.popen3(path, chdir: File.dirname(path))
         stdin.sync = true
         stdout.sync = true
         stderr.sync = true
@@ -402,10 +404,10 @@ class Runner
         @tiles_revealed = Set.new()
     end
 
-    def add_bot(argv)
+    def add_bot(path)
         @bots << {:position => @spawn_points.shift, :score => 0}
         bot_index = @bots_io.size
-        @bots_io << start_bot(argv) do |line|
+        @bots_io << start_bot(path) do |line|
             if @verbose >= 2 && bot_index == 0
                 STDERR.puts "Bot says: #{line}"
             end
@@ -769,8 +771,7 @@ bot_paths = ARGV.map do |x|
 end
 
 if bot_paths.empty?
-    STDERR.puts "Error: Please specify a path to your bot!"
-    exit(1)
+    bot_paths << "random-walker"
 end
 
 # Apply stage if given
