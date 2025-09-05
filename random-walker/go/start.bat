@@ -1,3 +1,3 @@
 @echo off
-go build -o bot.exe random_walker.go
+go build -o bot.exe bot.go
 bot.exe

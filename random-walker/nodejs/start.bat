@@ -1,2 +1,2 @@
 @echo off
-node random-walker.js
+node bot.js

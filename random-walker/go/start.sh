@@ -1,4 +1,4 @@
 #!/bin/sh
 set -e
-go build -o bot random_walker.go
+go build -o bot bot.go
 exec ./bot

@@ -1,2 +1,2 @@
 #!/bin/sh
-pwsh -File random-walker.ps1
+pwsh -File bot.ps1

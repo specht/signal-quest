@@ -1,3 +1,3 @@
 @echo off
-javac -cp json.jar RandomWalker.java
-java -cp .;json.jar RandomWalker
+javac -cp json.jar Bot.java
+java -cp .;json.jar Bot

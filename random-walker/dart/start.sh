@@ -1,3 +1,2 @@
 #!/bin/sh
-set -e
-exec dart run random_walker.dart
+exec dart run bot.dart

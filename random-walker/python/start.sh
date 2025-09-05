@@ -1,2 +1,2 @@
 #!/bin/sh
-python3 random-walker.py
+python3 bot.py

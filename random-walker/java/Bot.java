@@ -3,7 +3,7 @@ import java.io.*;
 import java.util.Random;
 import org.json.*;   // from json.jar
 
-public class RandomWalker {
+public class Bot {
   public static void main(String[] args) throws Exception {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
     boolean firstTick = true;

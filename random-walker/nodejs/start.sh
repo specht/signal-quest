@@ -1,2 +1,2 @@
 #!/bin/sh
-node random-walker.js
+node bot.js

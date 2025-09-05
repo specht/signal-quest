@@ -1,2 +1,2 @@
 @echo off
-ruby random-walker.rb
+ruby bot.rb

@@ -1,2 +1,2 @@
 @echo off
-php random-walker.php
+php bot.php

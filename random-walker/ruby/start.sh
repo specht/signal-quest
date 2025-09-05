@@ -1,2 +1,2 @@
 #!/bin/sh
-ruby random-walker.rb
+ruby bot.rb

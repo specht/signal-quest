@@ -1,2 +1,2 @@
 @echo off
-python3 random-walker.py
+python3 bot.py

@@ -1,2 +1,2 @@
 #!/bin/sh
-php random-walker.php
+php bot.php

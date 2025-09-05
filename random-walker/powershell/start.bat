@@ -1,2 +1,2 @@
 @echo off
-powershell -ExecutionPolicy Bypass -File random-walker.ps1
+powershell -ExecutionPolicy Bypass -File bot.ps1
