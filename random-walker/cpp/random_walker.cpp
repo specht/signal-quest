@@ -33,8 +33,6 @@ int main() {
                 if (it_h != cfg.end() && it_h->second.is<double>()) height = (int)it_h->second.get<double>();
                 std::cerr << "Random walker (C++) launching on a "
                           << width << "x" << height << " map\n" << std::flush;
-            } else {
-                std::cerr << "Random walker (C++) launching (no config)\n" << std::flush;
             }
         }
 
