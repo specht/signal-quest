@@ -264,7 +264,6 @@ class Runner
 
     def start_bot(_path, &block)
         path = File.join(File.expand_path(_path), 'start.sh')
-        STDERR.puts path
         stdin, stdout, stderr, wait_thr = Open3.popen3(path, chdir: File.dirname(path))
         stdin.sync = true
         stdout.sync = true
