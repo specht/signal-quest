@@ -14,7 +14,7 @@ Der Wettbewerb besteht aus mehreren Stufen. Da der Wettbewerb nebenbei zur Schul
 
 | Beginn | Dauer | Stage | Titel |
 |--------|--------|-------|-------|
-| 06.10.2025 | 4 Wochen | Stage 0 | System Check (optional) |
+| 06.10.2025 | 4 Wochen | Stage 0 | **System Check** (optional) |
 | 03.11.2025 | 3 Wochen | Stage 1 | **Training Grounds** |
 | 24.11.2025 | 3 Wochen | Stage 2 | **Dark Signal** |
 | 15.12.2025 | 6 Wochen | Stage 3 | **Resonance** |
