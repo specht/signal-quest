@@ -1,8 +1,0 @@
-current: stage-1@0.1
-stage-1@0.1:
-    width: 11
-    height: 11
-    generator: arena
-    emit_signals: false
-    beacon_spawn: [0.04, 0.06]
-    beacon_icon: ✨
